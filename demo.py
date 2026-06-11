@@ -1,13 +1,19 @@
-from flask import Flask, redirect, url_for, render_template # type: ignore
+from flask import Flask, redirect, url_for, render_template, send_file # type: ignore
 import yfinance as yf # type: ignore
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use("Agg")
+import io
 
 screen = yf.screen("most_actives", count=10)
-print(type(screen))
 
 #page = ""
 #for ticker in screen["quotes"]:
 #    page += f"{ticker['symbol']}: {ticker['longName']} - {ticker['regularMarketVolume']} - {ticker['regularMarketPrice']} - {ticker['marketCap']} - {ticker['regularMarketChange']} - {ticker['regularMarketChangePercent']}%\n"
 #print(page)
+
+ticker = yf.Ticker("MSFT").history(period="1mo")
 
 
 #Flask App
@@ -39,6 +45,23 @@ def index():
 @app.route("/graph")
 def graph():
     return render_template("graph.html", screen = screen)
+
+@app.route("/plot/<symbol>")
+def plot_stock(symbol):
+    df = yf.Ticker(symbol).history(period="1mo")
+
+    fig, ax = plt.subplots()
+    ax.plot(df.index, df["Close"])
+    ax.set_title(f"{symbol} Close Price")
+    ax.set_xlabel("Date")
+    ax.set_ylabel("Price")
+
+    img = io.BytesIO()
+    fig.savefig(img, format="png", bbox_inches="tight")
+    plt.close(fig)
+
+    img.seek(0)
+    return send_file(img, mimetype="image/png")
 
 if __name__ == "__main__":
     app.run()
