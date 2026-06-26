@@ -1,10 +1,10 @@
-from flask import Flask, redirect, url_for, render_template, send_file # type: ignore
+from flask import Flask, redirect, url_for, render_template, send_file, jsonify # type: ignore
 import yfinance as yf # type: ignore
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib
 matplotlib.use("Agg")
-import io
+
 
 screen = yf.screen("most_actives", count=10)
 
@@ -14,7 +14,7 @@ screen = yf.screen("most_actives", count=10)
 #print(page)
 
 ticker = yf.Ticker("MSFT").history(period="1mo")
-
+print(type(ticker))
 
 #Flask App
 
@@ -42,26 +42,41 @@ def compact_number(value):
 def index():
     return render_template("index.html", screen = screen)
 
-@app.route("/graph")
-def graph():
-    return render_template("graph.html", screen = screen)
 
-@app.route("/plot/<symbol>")
-def plot_stock(symbol):
+
+@app.route("/api/stock/<symbol>")
+def stock_api(symbol):
+    symbol = symbol.upper()
+
     df = yf.Ticker(symbol).history(period="1mo")
 
-    fig, ax = plt.subplots()
-    ax.plot(df.index, df["Close"])
-    ax.set_title(f"{symbol} Close Price")
-    ax.set_xlabel("Date")
-    ax.set_ylabel("Price")
+    if df.empty:
+        return jsonify({
+            "symbol": symbol,
+            "data": []
+        })
 
-    img = io.BytesIO()
-    fig.savefig(img, format="png", bbox_inches="tight")
-    plt.close(fig)
+    df = df.reset_index()
 
-    img.seek(0)
-    return send_file(img, mimetype="image/png")
+    stock_data = []
+
+    for _, row in df.iterrows():
+        stock_data.append({
+            "date": row["Date"].strftime("%Y-%m-%d"),
+            "close": round(row["Close"], 2)
+        })
+
+    return jsonify({
+        "symbol": symbol,
+        "data": stock_data
+    })
+#Graph page
+@app.route("/stock/<symbol>")
+def stock_page(symbol):
+    return render_template("stock.html", symbol=symbol.upper())
+
+
+
 
 if __name__ == "__main__":
     app.run()

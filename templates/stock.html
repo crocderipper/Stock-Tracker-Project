@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ symbol }} Stock Graph</title>
+<!--
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 30px;
+      background: #f5f5f5;
+    }
+
+    canvas {
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    a {
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+  </style>
+  -->
+</head>
+<body>
+
+  <a href="/">← Back to search</a>
+
+  <h1>{{ symbol }} Closing Price - Last 1 Month</h1>
+
+  <canvas id="stockCanvas" width="900" height="450"></canvas>
+
+  <script src="{{ url_for('static', filename='scripts/stock.js') }}"></script>
+
+</body>
+</html>

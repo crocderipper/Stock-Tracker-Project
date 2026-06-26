@@ -1,64 +1,118 @@
 <!DOCTYPE html>
- <head>
-    <link rel="stylesheet" href="static/global.css">
-    <link rel="stylesheet" href="static/index.css">    
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stock Tracker</title>
+
+  <!-- Keep this path if your Tailwind build command outputs to static/output.css -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='output.css') }}">
 </head>
 
-
-                                
-
-<!-- ============================================ -->
-<!--                    Table                     -->
-<!-- ============================================ -->
-
 <body>
-<section id="table-1669">
-    <div class="cs-container">
-        <div class="cs-content">
-            <span class="cs-topper">Stock Tracker</span>
-            <h2 class="cs-title">Most Active Stocks</h2>
-        </div>
-        <table class="cs-table">
-            <thead>
-                <tr class="cs-color">
-                    <th class="cs-th">Ticker</th>
-                    <th class="cs-th">Name</th>
-                    <th class="cs-th">Price</th>
-                    <th class="cs-th">Change</th>
-                    <th class="cs-th">Change %</th>
-                    <th class="cs-th">Volume</th>
-                    <th class="cs-th">Market Cap</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for ticker in screen["quotes"] %}
-                <tr class="cs-tr">
-                    <td class="cs-td">{{ ticker["symbol"] }}</td>
-                    <td class="cs-td">{{ ticker["longName"] }}</td>
-                    <td class="cs-td">$ {{"%.2f"|format(ticker["regularMarketPrice"]) }}</td>
-                    <td class="cs-td 
-                    {% if ticker['regularMarketChange'] > 0 %}
-                        positive
-                    {% elif ticker['regularMarketChange'] < 0 %}
-                        negative
-                    {% endif %}
-                    ">
-                    {{ "{:.2f}".format(ticker["regularMarketChange"]) }}
-</td>
-                    <td class="cs-td
-                    {% if ticker['regularMarketChangePercent'] > 0 %}
-                        positive
-                    {% elif ticker['regularMarketChangePercent'] < 0 %}
-                        negative
-                    {% endif %}
-                    ">% {{"%.2f"|format(ticker["regularMarketChangePercent"]) }}</td>
-                    <td class="cs-td">{{ ticker["regularMarketVolume"] | compact_number }}</td>
-                    <td class="cs-td">$ {{ ticker["marketCap"] | compact_number }}</td>
-                </tr>
-                {% endfor %}  
-            </tbody>
-        </table>
-    </div>
-</section>
+  <main class="site-shell">
 
-</body>                                
+    <!-- ============================================ -->
+    <!--              Most Active Table               -->
+    <!-- ============================================ -->
+
+    <section class="space-y-24">
+      <header class="page-header">
+        <span class="section-kicker">Stock Tracker</span>
+        <h1 class="page-title">Most Active Stocks</h1>
+      </header>
+
+      <div class="table-card">
+        <table class="stock-table">
+          <thead>
+            <tr>
+              <th class="table-head-cell table-head-primary">Ticker</th>
+              <th class="table-head-cell">Name</th>
+              <th class="table-head-cell text-right">Price</th>
+              <th class="table-head-cell text-right">Change</th>
+              <th class="table-head-cell text-right">Change %</th>
+              <th class="table-head-cell text-right">Volume</th>
+              <th class="table-head-cell text-right">Market Cap</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for ticker in screen["quotes"] %}
+            <tr class="table-row">
+              <td class="table-cell font-bold">
+                <button
+                  type="button"
+                  class="ticker-link"
+                  data-symbol="{{ ticker['symbol'] }}"
+                >
+                  {{ ticker["symbol"] }}
+                </button>
+              </td>
+
+              <td class="table-cell">{{ ticker["longName"] }}</td>
+              <td class="table-cell text-right">$ {{ "%.2f"|format(ticker["regularMarketPrice"]) }}</td>
+
+              <td class="table-cell text-right
+                {% if ticker['regularMarketChange'] > 0 %}
+                  positive
+                {% elif ticker['regularMarketChange'] < 0 %}
+                  negative
+                {% endif %}
+              ">
+                {{ "{:.2f}".format(ticker["regularMarketChange"]) }}
+              </td>
+
+              <td class="table-cell text-right
+                {% if ticker['regularMarketChangePercent'] > 0 %}
+                  positive
+                {% elif ticker['regularMarketChangePercent'] < 0 %}
+                  negative
+                {% endif %}
+              ">
+                % {{ "%.2f"|format(ticker["regularMarketChangePercent"]) }}
+              </td>
+
+              <td class="table-cell text-right">{{ ticker["regularMarketVolume"] | compact_number }}</td>
+              <td class="table-cell text-right">$ {{ ticker["marketCap"] | compact_number }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+
+    <!-- ============================================ -->
+    <!--              Stock Search Graph              -->
+    <!-- ============================================ -->
+
+    <section id="stock-search-section" class="graph-section">
+      <div class="graph-header">
+        <div>
+          <span class="section-kicker">Price Chart</span>
+          <h2 class="section-title">Stock Graph</h2>
+        </div>
+
+        <div class="search-controls">
+          <input
+            id="symbolInput"
+            class="search-input"
+            placeholder="Enter stock symbol"
+            value="MSFT"
+          >
+          <button class="search-button" onclick="loadStock()">Search</button>
+        </div>
+      </div>
+
+      <div id="message" class="message-text"></div>
+
+      <div class="chart-card">
+        <canvas id="stockCanvas" width="900" height="450" class="chart-canvas"></canvas>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="{{ url_for('static', filename='scripts/index.js') }}"></script>
+</body>
+</html>

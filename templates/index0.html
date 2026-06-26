@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <title>Stock Tracker</title>
+<!--
+  <link rel="stylesheet" href="{{ url_for('static', filename='global.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+-->
+  <link rel="stylesheet" href="{{ url_for('static', filename='output.css') }}">
+
+  <style>
+    #stock-search-section {
+      font-family: Arial, sans-serif;
+      padding: 30px;
+      background: #f5f5f5;
+    }
+
+    #stock-search-section input,
+    #stock-search-section button {
+      padding: 10px 14px;
+      font-size: 16px;
+    }
+
+    #stockCanvas {
+      display: block;
+      margin-top: 25px;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    #message {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ============================================ -->
+  <!--              Most Active Table               -->
+  <!-- ============================================ -->
+
+  <section id="table-1669">
+    <div class="cs-container">
+      <div class="cs-content">
+        <span class="cs-topper">Stock Tracker</span>
+        <h2 class="cs-title">Most Active Stocks</h2>
+      </div>
+
+      <table class="cs-table">
+        <thead>
+          <tr class="cs-color">
+            <th class="cs-th">Ticker</th>
+            <th class="cs-th">Name</th>
+            <th class="cs-th">Price</th>
+            <th class="cs-th">Change</th>
+            <th class="cs-th">Change %</th>
+            <th class="cs-th">Volume</th>
+            <th class="cs-th">Market Cap</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for ticker in screen["quotes"] %}
+          <tr class="cs-tr">
+            <td class="cs-td">
+              <button
+                type="button"
+                class="ticker-link"
+                data-symbol="{{ ticker['symbol'] }}"
+              >
+                {{ ticker["symbol"] }}
+              </button>
+            </td>
+            <td class="cs-td">{{ ticker["longName"] }}</td>
+            <td class="cs-td">$ {{"%.2f"|format(ticker["regularMarketPrice"]) }}</td>
+
+            <td class="cs-td
+              {% if ticker['regularMarketChange'] > 0 %}
+                positive
+              {% elif ticker['regularMarketChange'] < 0 %}
+                negative
+              {% endif %}
+            ">
+              {{ "{:.2f}".format(ticker["regularMarketChange"]) }}
+            </td>
+
+            <td class="cs-td
+              {% if ticker['regularMarketChangePercent'] > 0 %}
+                positive
+              {% elif ticker['regularMarketChangePercent'] < 0 %}
+                negative
+              {% endif %}
+            ">
+              % {{"%.2f"|format(ticker["regularMarketChangePercent"]) }}
+            </td>
+
+            <td class="cs-td">{{ ticker["regularMarketVolume"] | compact_number }}</td>
+            <td class="cs-td">$ {{ ticker["marketCap"] | compact_number }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+
+  <!-- ============================================ -->
+  <!--              Stock Search Graph              -->
+  <!-- ============================================ -->
+
+  <section id="stock-search-section">
+    <h1>Stock Graph</h1>
+
+    <input id="symbolInput" placeholder="Enter stock symbol" value="MSFT">
+    <button onclick="loadStock()">Search</button>
+
+    <div id="message"></div>
+
+    <canvas id="stockCanvas" width="900" height="450"></canvas>
+  </section>
+
+  <script src="{{ url_for('static', filename='scripts/index.js') }}"></script>
+
+</body>
+</html>

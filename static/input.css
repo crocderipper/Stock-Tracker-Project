@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    @apply min-h-screen bg-stone-50 text-[#1f2233] font-serif;
+  }
+}
+
+@layer components {
+  .site-shell {
+    @apply max-w-7xl mx-auto px-5 sm:px-8 lg:px-10 py-9;
+  }
+
+  .page-header {
+    @apply max-w-4xl;
+  }
+
+  .section-kicker {
+    @apply text-[#ff6244] uppercase tracking-[0.2em] text-sm font-bold;
+  }
+
+  .page-title {
+    @apply mt-3 text-5xl md:text-6xl font-bold text-[#1f1f1f] font-serif leading-tight;
+  }
+
+  .table-card {
+    @apply mt-20 overflow-x-auto border border-gray-300 bg-white;
+  }
+
+  .stock-table {
+    @apply min-w-[1000px] w-full border-collapse text-base md:text-[17px] font-serif text-[#1f2545];
+  }
+
+  .table-head-cell {
+    @apply border border-gray-300 bg-gray-100 px-4 py-4 text-left text-black font-bold;
+  }
+
+  .table-head-cell-primary {
+    @apply border border-[#ff6244] bg-[#ff6244] px-4 py-4 text-left text-white font-bold;
+  }
+
+  .table-cell {
+    @apply border border-gray-300 px-4 py-3;
+  }
+
+  .ticker-link {
+    @apply text-blue-600 underline font-bold hover:text-blue-800 transition;
+  }
+
+  .positive {
+    @apply text-green-600;
+  }
+
+  .negative {
+    @apply text-red-600;
+  }
+
+  .graph-section {
+    @apply mt-14 max-w-5xl bg-gray-100 p-6 sm:p-8 border border-gray-300;
+  }
+
+  .graph-title {
+    @apply text-3xl font-bold font-serif text-[#1f1f1f];
+  }
+
+  .search-row {
+    @apply mt-6 flex flex-col sm:flex-row gap-3;
+  }
+
+  .search-input {
+    @apply w-full sm:w-80 border border-gray-300 px-4 py-3 text-base rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-[#ff6244];
+  }
+
+  .search-button {
+    @apply bg-[#ff6244] text-white px-6 py-3 rounded-md font-bold hover:bg-[#e75136] transition;
+  }
+
+  .chart-canvas {
+    @apply mt-8 block w-full max-w-full bg-white border border-gray-300 rounded-lg;
+  }
+}
